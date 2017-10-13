@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>【面对塞纳河编程】SNH48 Group第一届人口普查 | Zhe Zheng&#39; Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="【面对塞纳河编程】SNH48 Group第一届人口普查Overview&amp;emsp;&amp;emsp;SNH48九期生招募已经在前不久落下了帷幕，团里的成员越来越多，加上暂休的成员，总数已经在不知不觉中超过了300人。面对这么多成员，总是会不自觉地想，这真是一个做数据分析和可视化的绝佳样本。于是产生了用爬虫获取官网成员资料，进行整理和分析的念头。我叫它“塞纳河人口普查”。 &amp;emsp;&amp;emsp;这篇文章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【面对塞纳河编程】SNH48 Group第一届人口普查">
+<meta property="og:url" content="http://yoursite.com/2017/10/13/report/index.html">
+<meta property="og:site_name" content="Zhe Zheng&#39; Blog">
+<meta property="og:description" content="【面对塞纳河编程】SNH48 Group第一届人口普查Overview&amp;emsp;&amp;emsp;SNH48九期生招募已经在前不久落下了帷幕，团里的成员越来越多，加上暂休的成员，总数已经在不知不觉中超过了300人。面对这么多成员，总是会不自觉地想，这真是一个做数据分析和可视化的绝佳样本。于是产生了用爬虫获取官网成员资料，进行整理和分析的念头。我叫它“塞纳河人口普查”。 &amp;emsp;&amp;emsp;这篇文章">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/image/json.jpg">
+<meta property="og:image" content="http://yoursite.com/image/json2.jpg">
+<meta property="og:image" content="http://yoursite.com/image/blood_type.png">
+<meta property="og:image" content="http://yoursite.com/image/star.png">
+<meta property="og:image" content="http://yoursite.com/image/skill.png">
+<meta property="og:image" content="http://yoursite.com/image/hobby.png">
+<meta property="og:image" content="http://yoursite.com/image/home.png">
+<meta property="og:updated_time" content="2017-10-13T12:03:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【面对塞纳河编程】SNH48 Group第一届人口普查">
+<meta name="twitter:description" content="【面对塞纳河编程】SNH48 Group第一届人口普查Overview&amp;emsp;&amp;emsp;SNH48九期生招募已经在前不久落下了帷幕，团里的成员越来越多，加上暂休的成员，总数已经在不知不觉中超过了300人。面对这么多成员，总是会不自觉地想，这真是一个做数据分析和可视化的绝佳样本。于是产生了用爬虫获取官网成员资料，进行整理和分析的念头。我叫它“塞纳河人口普查”。 &amp;emsp;&amp;emsp;这篇文章">
+<meta name="twitter:image" content="http://yoursite.com/image/json.jpg">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/typing.css">
+  
+</head>
+
+  
+    
+      <body>
+    
+  
+      <div id="container" class="container">
+        <article id="post-report" class="article article-type-post" itemscope itemprop="blogPost">
+  <header id="header" class="header">
+  <nav id="main-nav" class="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Blog</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+  </nav>
+</header>
+
+  <hr/>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      【面对塞纳河编程】SNH48 Group第一届人口普查
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry typo" itemprop="articleBody">
+      
+        <h1 id="【面对塞纳河编程】SNH48-Group第一届人口普查"><a href="#【面对塞纳河编程】SNH48-Group第一届人口普查" class="headerlink" title="【面对塞纳河编程】SNH48 Group第一届人口普查"></a>【面对塞纳河编程】SNH48 Group第一届人口普查</h1><h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>&emsp;&emsp;SNH48九期生招募已经在前不久落下了帷幕，团里的成员越来越多，加上暂休的成员，总数已经在不知不觉中超过了300人。面对这么多成员，总是会不自觉地想，这真是一个做数据分析和可视化的绝佳样本。于是产生了用爬虫获取官网成员资料，进行整理和分析的念头。我叫它“塞纳河人口普查”。</p>
+<p>&emsp;&emsp;这篇文章会先讲一些获得数据的技术手段（只有粗浅的一点点），已经对于获得成员资料的一些简单的整理分析和可视化，当然有一些分析的内容可能已经有聚聚在之前做过了。如果对技术不太感冒的聚聚可以跳过下一个part。</p>
+<h2 id="数据获取"><a href="#数据获取" class="headerlink" title="数据获取"></a>数据获取</h2><p>&emsp;&emsp;成员资料全部通过Python爬虫从官网抓取。因为之前只做过一些静态网页的爬取，而SNH48 group的官网均为动态网页。我刚开始想的办法的是通过<em>Selenium</em>的<em>Webdrive</em>模块实现。对于动态网页的爬取来说这是一个比较省力且傻瓜的方式。<em>Webdriver</em>直接控制操作系统的浏览器访问网页，等待网页渲染完毕之后返回相应的内容。与其说是爬虫，不如说是一个自动化工具。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">from selenium import webdriver</div><div class="line"></div><div class="line">def get_data(team,id):</div><div class="line"></div><div class="line">	member_url = &apos;http://www.&apos; + team + &apos;.com/member_details.html?sid=&apos; + id</div><div class="line"></div><div class="line">	driver = webdriver.Firefox()</div><div class="line"></div><div class="line">	driver.get(member_url)</div><div class="line"></div><div class="line">	content = driver.page_source</div><div class="line"></div><div class="line">	return content</div></pre></td></tr></table></figure>
+<p> &emsp;&emsp;相比于其他爬虫工具，<em>Selenium</em>只用几行代码就可以实现一个简单的爬取，但是相对而言耗时会久一些，从海外访问丝芭的网站响应速度又十分蛋疼，300多名成员的资料没有两三个小时是完成不了爬取的，这完全违背了爬虫高效的特征。<br>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
+<p>&emsp;&emsp;幸好，通过对浏览器抓包发现，所有成员的资料都储存在一个json文件中，每次通过成员ID回调获得资料。这就意味着我们只需要爬取一次就可以获得所有成员的资料。从这个方面来说我还是很喜欢丝芭的官网的。</p>
+<p><img src="/image/json.jpg" alt=""></p>
+<p><img src="/image/json2.jpg" alt=""></p>
+<p>&emsp;&emsp;代码实现如下</p>
+<pre><code>import requests
+import urllib
+
+def member_crawler(team_code):
+    headers = {&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11&apos;,
+      &apos;Accept-Language&apos;: &apos;zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3&apos;,
+      &apos;Accept-Encoding&apos;: &apos;gzip, deflate&apos;,
+      &apos;Content-Type&apos;: &apos;application/x-www-form-urlencoded; charset= utf-8&apos;,
+      &apos;Connection&apos;:&quot;keep-alive&quot;,
+      &apos;Referer&apos;: &apos;http://www.snh48.com/member_details.html?sid=10001&apos;
+      }
+
+      url = &apos;http://h5.snh48.com/resource/jsonp/members.php?gid=&apos; + team_code +&apos;&amp;callback=get_members_success&apos;
+
+      req = urllib.request.Request(url,headers=headers)
+
+      res = urllib.request.urlopen(req)
+
+      content = res.read().decode(&apos;utf-8&apos;)
+
+      return content
+</code></pre><p>&emsp;&emsp;爬虫返回内容的整理我在这里直接用的正则表达式匹配。对于json文件，其实有更加快速方便的方法，我用了这种傻瓜的方式，也只是因为我觉得正则用的比较顺手（捂脸）。</p>
+<p>&emsp;&emsp;有兴趣的朋友也可以没事去爬爬丝芭的网站，比如爬一下最新生写头像什么的。</p>
+<h2 id="数据分析"><a href="#数据分析" class="headerlink" title="数据分析"></a>数据分析</h2><p>&emsp;&emsp;数据爬取于2017年10月1日。截止当日，官网名单（包括暂休）共有<strong>312</strong>名成员，其中SNH48拥有成员<strong>116</strong>名，GNZ48拥有成员<strong>77</strong>名，BEJ48拥有成员<strong>72</strong>名，SHY48拥有成员<strong>47</strong>名。在进行数据分析的过程中NII又有新成员马凡加入。因为个人倦怠，就没有加上马凡的资料，所有数据还是基于<strong>312</strong>名成员的资料进行展示。</p>
+<h3 id="身高"><a href="#身高" class="headerlink" title="身高"></a>身高</h3><p>&emsp;&emsp;首先，我们从<strong>身高</strong>这个刺激的话题开始。在爬的过程中，我就猜想过那个分团的平均身高会是最高的，初步猜想可能SHY48会有一些优势，毕竟是在模特学校招过成员的分团，但是数据的结果却和我猜想的有一些不同。</p>
+<p>&emsp;&emsp;SNH48 group 312名成员的平均身高是<strong>164.1</strong>cm。</p>
+<p>​    SNH48成员的平均身高为<strong>165.0</strong>cm。</p>
+<p>​    GNZ48成员的平均身高为<strong>163.5</strong>cm。    </p>
+<p>​    BEJ48成员的平均身高为<strong>163.1</strong>cm。</p>
+<p>​    SHY48成员的平均身高为<strong>164.7</strong>cm。</p>
+<p>​    万万没想到，本部居然是平均身高最高的。BEJ48全group平均最矮。emmmm，对于这个，我就不发表什么评论了。</p>
+<p>​    通过计算方差，成员之间身高<strong>差距最小</strong>的是<strong>SNH48</strong>，身高<strong>差距最大</strong>的是<strong>SHY48</strong>。</p>
+<p>​    接着我们来看看王国里的最高之人和最矮之人。来自SNH48 Team HII的<strong>姜涵</strong>以<strong>176</strong>cm的身高夺得<strong>最高</strong>之人的桂冠，全Group<strong>最矮</strong>的称号则被来自GNZ48 Team NIII的闹闹<strong>卢静</strong>和来自BEJ48 Team E的<strong>李烨</strong>以<strong>155cm</strong>的身高共同获得。</p>
+<p>​    对于这两项数据，大家也知道水分有多大，络络的官网身高还是刚入团时的<strong>172</strong>cm，这显然是不科学的。以及某位<strong>DDD</strong>同学（我就不指名道姓说了）在官网的身高是<strong>159</strong>cm，你的良心不会痛吗？</p>
+<h3 id="血型"><a href="#血型" class="headerlink" title="血型"></a>血型</h3><p>​    中国是以<strong>OB</strong>血型为主体的国家。我军全group血型分布如下</p>
+<p><img src="/image/blood_type.png" alt=""></p>
+<p>​    对于血型，没有什么太多能发表的看法。有这么多成员不知道自己的血型也是比较有趣的一件事。以及我们总是说塞纳河是一个小社会，从血型分布上来说，也确实是这样的，完美符合中国社会的血型分布。所以说，林子大了，什么小可爱都有，这么想来，河内发生什么事都不足为奇了，这就是一个社会的缩影嘛~</p>
+<h3 id="星座-amp-出生时间"><a href="#星座-amp-出生时间" class="headerlink" title="星座&amp;出生时间"></a>星座&amp;出生时间</h3><p>​    星座和出生时间就放在一起讨论了。</p>
+<p>​    全Group星座御三家如下：</p>
+<p>&emsp;&emsp;1. <strong>处女座</strong> 33人</p>
+<p>&emsp;&emsp;2. <strong>双子座</strong> 32人</p>
+<p>&emsp;&emsp;3. <strong>射手座</strong> 28人</p>
+<p>&emsp;&emsp;3. <strong>天秤座</strong> 28人</p>
+<p>​    其中处女座以微弱优势获得领先，而摩羯座是成员数量最少的星座。你的推的星座是否榜上有名呢。因为我对星座实在是没有什么认识，所以发表不了太多看法。剩下星座的人数都在下面的柱状图里了。</p>
+<p><img src="/image/star.png" alt=""></p>
+<p>​    另一件有意思的事是，一年中哪一天有最多数量的成员过生日呢？</p>
+<p>​    答案是<strong>3月23日</strong>。</p>
+<p>​    徐真，梁可，邓恩惠，苏杉杉，乔钰珂，杨晔六名成员在3月23日过生日。其中3位来自BEJ48。话说我女朋友的生日也是这一天，可能这一天出生的女孩子会可爱一点吧！</p>
+<h3 id="特长-amp-爱好"><a href="#特长-amp-爱好" class="headerlink" title="特长&amp;爱好"></a>特长&amp;爱好</h3><p>​    成员的特长和爱好多种多样，做数量统计未免不够直观。所以我在这里把特长和爱好收集在了一起，做完分词之后将它们做成了词云。词云中字体越大则说明拥有这个特长或爱好的成员越多。</p>
+<p>​    首先我们来看成员特长的词云：</p>
+<p><img src="/image/skill.png" alt=""></p>
+<p>​    不出所料的是，<strong>跳舞</strong>和<strong>唱歌</strong>占据了最大的两个字体，钢琴，画画，表演紧随其后。妹子选择入团，必然是对歌舞表演充满兴趣的。不过特长其中也混进了一些奇怪的，emmm，东西。比如：<strong>反射弧特长，腿特长，一秒变马云，把天聊死…</strong>我只能说，姑娘们，我敬你们是条好汉。</p>
+<p>​    接着我们来看看关于爱好的词云：</p>
+<p><img src="/image/hobby.png" alt=""></p>
+<p>​    不出所料的跳舞唱歌，接着比较多人喜欢的是<strong>看电影，旅游，动漫，宅舞</strong>。比较惊奇的是，有<strong>24</strong>名在个人爱好这里选择了<strong>宅舞</strong>，比我想象中多不少，希望接下来能看到更多成员的宅舞表演吧。</p>
+<p>​    当然爱好中也有一些奇奇怪怪的存在，比如<strong>躺着吃外卖打王者荣耀，思考人生，看and模仿鬼畜视频</strong>这些的。</p>
+<h3 id="家乡"><a href="#家乡" class="headerlink" title="家乡"></a>家乡</h3><p>​    好像之前已经有聚聚统计过了成员的籍贯信息。不过最近又加入了一批新成员，信息也需要更新。</p>
+<p>​    诞生成员最多的省份的御三家分别是：<strong>四川</strong>（35人），<strong>广东</strong>（28人），<strong>辽宁</strong>（27人）。<strong>上海</strong>以25人位居第四。</p>
+<p>​    不得不说，川渝地区真是扛起了SNH48 Group的半边天。将成员家乡省份的分布做成热点图如下</p>
+<p><img src="/image/home.png" alt=""></p>
+<p>看看这个分布，什么叫做天下布妹，这就是天下布妹。除了没有来自<strong>西藏</strong>，<strong>宁夏</strong>，<strong>澳门</strong>这三个自治区、特别行政区的成员，别的省市自治区都有妹子加入了SNH48 Group。接下来很期待这是那个地区的女生入团了，等着这张图被蓝色填满的那一天。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>​    从起念做这个project到最后完成花了正好整整24个小时。其实也只是做了一些很粗浅的东西。如果大家还有什么想要从这些数据里挖掘的也可以在评论里留言。我也还有很多想法没有实践，如果接下来有时间还会继续完善。</p>
+<p>​    成员的资料我已经整理成了Excel文件和Python的代码一起放在Github上。<a href="https://github.com/TheSuguser/SNH48_member" target="_blank" rel="external">Github请戳这里</a> 如果觉得喜欢或者有帮到你，也可以给一个Star哦。如果对于爬虫，数据分析，机器学习想要一起交流的聚聚请大力私联我！</p>
+<p>​    最后夹带一个私货，欢迎大家关注SNH48-谢天依，以及谢天依应援会（414680601）​</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <ul class="article-meta">
+        <li>
+          <span class="label">Published Date:</span>
+          <a href="/2017/10/13/report/" class="article-date">
+  <time datetime="2017-10-13T11:55:29.000Z" itemprop="datePublished">2017-10-13</time>
+</a>
+
+        </li>
+        
+          <li>
+            <span class="label">Category:</span>
+            
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/中文文章/">中文文章</a>
+  </div>
+
+
+          </li>
+        
+        
+        <hr/>
+      </ul>
+    </footer>
+  </div>
+  
+    
+
+  
+</article>
+
+
+
+
+
+
+      </div>
+      
+    <footer id="footer" class="post-footer footer">
+      
+      <hr/>
+      <div id="footerContent" class="footer-content">
+        <p>ipsum dolor sit amet, <strong>consectetur adipiscing elit.</strong> Fusce eget urna vitae velit <em>eleifend interdum at ac nisi. In nec ligula lacus. Cum sociis natoque</em> penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed eu cursus erat, ut dapibus quam. Post</p>
+
+
+      </div>
+    </footer>
+
+      
+
+
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/typing.js"></script>
+<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+
+
+
+
+
+
+
+    </div>
+  </body>
+</html>
