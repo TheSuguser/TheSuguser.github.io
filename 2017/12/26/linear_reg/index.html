@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>线性回归 | Zhe Zheng&#39; Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="线性回归写在前面​    从开始学习机器学习以来，除了Github和Stack Overflow这两个世界知名同性交友平台以外，对我帮助最大的就是中外各位大牛的博客。除了感激之外，也兴起了自己更新博客的念头。一是帮助自己复习巩固最近学习的内容，二是也许能给和我一样遇到问题的朋友一点帮助。更新的内容也许和最近上课的内容有关，也许和最近手头的项目相关。第一篇想写的就从最基础的线性回归开始。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线性回归">
+<meta property="og:url" content="http://yoursite.com/2017/12/26/linear_reg/index.html">
+<meta property="og:site_name" content="Zhe Zheng&#39; Blog">
+<meta property="og:description" content="线性回归写在前面​    从开始学习机器学习以来，除了Github和Stack Overflow这两个世界知名同性交友平台以外，对我帮助最大的就是中外各位大牛的博客。除了感激之外，也兴起了自己更新博客的念头。一是帮助自己复习巩固最近学习的内容，二是也许能给和我一样遇到问题的朋友一点帮助。更新的内容也许和最近上课的内容有关，也许和最近手头的项目相关。第一篇想写的就从最基础的线性回归开始。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-12-26T22:20:35.428Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="线性回归">
+<meta name="twitter:description" content="线性回归写在前面​    从开始学习机器学习以来，除了Github和Stack Overflow这两个世界知名同性交友平台以外，对我帮助最大的就是中外各位大牛的博客。除了感激之外，也兴起了自己更新博客的念头。一是帮助自己复习巩固最近学习的内容，二是也许能给和我一样遇到问题的朋友一点帮助。更新的内容也许和最近上课的内容有关，也许和最近手头的项目相关。第一篇想写的就从最基础的线性回归开始。">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/typing.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+</head>
+
+  
+    
+      <body>
+    
+  
+      <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container" class="container">
+        <article id="post-linear_reg" class="article article-type-post" itemscope itemprop="blogPost">
+  <header id="header" class="header">
+  <nav id="main-nav" class="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Blog</a>
+    
+  </nav>
+</header>
+
+  <hr/>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      线性回归
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry typo" itemprop="articleBody">
+      
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+
+<h1 id="线性回归"><a href="#线性回归" class="headerlink" title="线性回归"></a>线性回归</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>​    从开始学习机器学习以来，除了Github和Stack Overflow这两个世界知名同性交友平台以外，对我帮助最大的就是中外各位大牛的博客。除了感激之外，也兴起了自己更新博客的念头。一是帮助自己复习巩固最近学习的内容，二是也许能给和我一样遇到问题的朋友一点帮助。更新的内容也许和最近上课的内容有关，也许和最近手头的项目相关。第一篇想写的就从最基础的线性回归开始。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>​    线性回归的方法最早由高斯于1794年提出，最早用于天文学和航海学，因为这个两个领域拥有较多有噪音的测量数据。</p>
+<p>​    例如我们拥有一个数据集<br>$$<br>S = { ((1,1),3), ((2,3),7)}<br>$$<br>这时，如果我们有一个新的输入\( \bf{x}_3 = (4,2) \), 与它对应的\( \bf{y}_3\)又是多少呢？简单来说，我们可以列出如下公式<br>$$<br>1  \bf{w}_1+ 1\bf{w}_2 = 3<br>\<br>2  \bf{w}_1+ 3\bf{w}_2 = 7<br>$$<br>甚至可以直接表示为<br>$$<br>\bf{Xw} = y<br>$$<br>其中<br>$$<br>\bf{X} =\left ( \begin{matrix} 1&amp;1 \ 2 &amp;3 \end{matrix}\right) ; \bf{y} = \left ( \begin{matrix} 3 \7 \end{matrix}\right)<br>$$<br> 因此我们就拥有了我们的线性预测<br>$$<br>\hat{\bf{y}} = \bf{w \cdot x}<br>$$<br>并且 \( \hat{\bf{y}}_3 = \bf{w \cdot x_3} = w<em>1 x</em>{3,1} + w<em>2x</em>{3,2} = 4<em>2 + 1</em>2 = 10\)</p>
+<p>​    对于这个数据集，通过简单求解方程就可以预测新输入所对应的值，但是如果遇到如下两种数据集，问题就会发生一些变化</p>
+<ul>
+<li><p>过定：<br>$$<br>S = {((1,1),3), ((2,3),7), ((2,1),3)}<br>$$</p>
+</li>
+<li><p>欠定：<br>$$<br>S = {((1,1,2),3), ((2,4,3),7)}<br>$$<br>这时，我们就需要找到能够最小化平方误差的线性预测。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <ul class="article-meta">
+        <li>
+          <span class="label">Published Date:</span>
+          <a href="/2017/12/26/linear_reg/" class="article-date">
+  <time datetime="2017-12-26T12:55:29.000Z" itemprop="datePublished">2017-12-26</time>
+</a>
+
+        </li>
+        
+          <li>
+            <span class="label">Category:</span>
+            
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/中文文章/">中文文章</a>
+  </div>
+
+
+          </li>
+        
+        
+        <hr/>
+      </ul>
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav" class="article-nav">
+  
+    <span id="article-nav-newer" class="article-nav-link-wrap newer"></span>
+  
+  
+    <a href="/2017/10/13/report/" id="article-nav-older" class="article-nav-link-wrap older">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">【面对塞纳河编程】SNH48 Group第一届人口普查</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+
+      </div>
+      
+    <footer id="footer" class="post-footer footer">
+      
+      <hr/>
+      <div id="footerContent" class="footer-content">
+        <p>ipsum dolor sit amet, <strong>consectetur adipiscing elit.</strong> Fusce eget urna vitae velit <em>eleifend interdum at ac nisi. In nec ligula lacus. Cum sociis natoque</em> penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed eu cursus erat, ut dapibus quam. Post</p>
+
+
+      </div>
+    </footer>
+
+      
+
+
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/typing.js"></script>
+<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+
+
+
+
+
+
+
+    </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  </body>
+</html>
