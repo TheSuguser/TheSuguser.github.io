@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="虽然说随着TensorFlow keras等一众深度学习框架的发展，搭建一个神经网络的难度已经变得和搭乐高积木一样不相上下：堆叠不同的Layer，反复的调参。虽然这些框架帮我们解决了很多繁复的工作，尤其是反向传播的过程，但是个人仍然觉得，想要更好地理解深度神经网络，以及想要理解卷积层和池化层的意义，仍然很有必要对反向传播的过程有一个更好的理解。在自己纯用numpy实现CNN的过程中，反向传">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反向传播推导：全连接层、卷积层、池化层">
+<meta property="og:url" content="http://yoursite.com/2018/02/26/back-propogation/index.html">
+<meta property="og:site_name" content="Zhe Zheng&#39; Blog">
+<meta property="og:description" content="虽然说随着TensorFlow keras等一众深度学习框架的发展，搭建一个神经网络的难度已经变得和搭乐高积木一样不相上下：堆叠不同的Layer，反复的调参。虽然这些框架帮我们解决了很多繁复的工作，尤其是反向传播的过程，但是个人仍然觉得，想要更好地理解深度神经网络，以及想要理解卷积层和池化层的意义，仍然很有必要对反向传播的过程有一个更好的理解。在自己纯用numpy实现CNN的过程中，反向传">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-03-25T14:25:53.589Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="反向传播推导：全连接层、卷积层、池化层">
+<meta name="twitter:description" content="虽然说随着TensorFlow keras等一众深度学习框架的发展，搭建一个神经网络的难度已经变得和搭乐高积木一样不相上下：堆叠不同的Layer，反复的调参。虽然这些框架帮我们解决了很多繁复的工作，尤其是反向传播的过程，但是个人仍然觉得，想要更好地理解深度神经网络，以及想要理解卷积层和池化层的意义，仍然很有必要对反向传播的过程有一个更好的理解。在自己纯用numpy实现CNN的过程中，反向传">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/02/26/back-propogation/"/>
+
+
+
+
+
+  <title>反向传播推导：全连接层、卷积层、池化层 | Zhe Zheng' Blog</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zhe Zheng' Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/26/back-propogation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zhe Zheng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zhe Zheng' Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">反向传播推导：全连接层、卷积层、池化层</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-26T12:55:29+00:00">
+                2018-02-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/中文文章/" itemprop="url" rel="index">
+                    <span itemprop="name">中文文章</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<p>虽然说随着<code>TensorFlow</code> <code>keras</code>等一众深度学习框架的发展，搭建一个神经网络的难度已经变得和搭乐高积木一样不相上下：堆叠不同的Layer，反复的调参。虽然这些框架帮我们解决了很多繁复的工作，尤其是反向传播的过程，但是个人仍然觉得，想要更好地理解深度神经网络，以及想要理解卷积层和池化层的意义，仍然很有必要对反向传播的过程有一个更好的理解。在自己纯用numpy实现CNN的过程中，反向传播给我带来了很大的麻烦，虽然最后弄清楚之后发现并没有这么困难，但是把自己的心得记录下来也很有必要。</p>
+<h2 id="全连接层"><a href="#全连接层" class="headerlink" title="全连接层"></a>全连接层</h2><p>​反向传播最核心的其实还是Chain Rule（链式求导法则），链式求导简单来说就是，已知$h(z) = t, g(y) = z, f(x) = y$, 那么<br>$$<br>\frac{\partial t}{\partial x} = \frac{\partial t}{\partial z} \frac{\partial z}{\partial x} = \frac{\partial t}{\partial z} \frac{\partial z}{\partial y}\frac{\partial y}{\partial x}<br>$$<br>​在全连阶层中，假设我们最后的loss使用的是cross entropy loss，激活函数使用的是softmax函数，即</p>
+<p>$$<br>\mathrm{loss}=\sum_{j=1}^{C} y_j \mathbf{log}(y^*)<br>$$</p>
+<p>其中，$\mathbf{y}^* = \mathrm{softmax}(\mathbf{z})$, $\mathbf{z} = \mathbf{Wx+b}$</p>
+<p>​那么对于Loss进行一系列求导过程如下：<br>$$<br>\frac{\partial loss}{\partial z<em>i} = \sum</em>{j=1}^{C} \frac{\partial loss}{\partial y_j^<em>}\frac{\partial{y_j^</em>}}{\partial z<em>i}= - \sum</em>{j=1}^{C} \frac{\partial y_j log(y_j^<em>)}{\partial y_j^</em>} \frac{\partial y_j^<em>}{\partial z<em>i} = - \sum</em>{j=1}^{C} \frac{y_j} {y_j^</em>} \frac{\partial y_j^<em>} {\partial z<em>i}= - \sum</em>{i=j}^{C} \frac{y_i} {y_i^</em>}\frac{\partial y_i^<em>} {\partial z<em>i}  - \sum</em>{i\neq j}^{C} \frac{y_j}{y_j^</em>}\frac{\partial y_i^<em>} {\partial z_i}\= - \frac{y_i}{y_i^</em>} y_i^<em>(1-y_i^</em>) - \sum_{i\neq j}^{C} \frac{y_j}{y_j^<em>} (y_i^</em>y_j^<em>)= - y_i + y_i y_i^</em> + \sum_{j\neq i}^{C} y_i^<em> y_j = -y<em>i + \sum</em>{j=1}^{C} y_i^</em> y_j = y_i^* - y_i<br>$$<br>其中比较有技巧的主要在于softmax函数的求导。得到如上的结果后，根据链式求导法则，则可以很容易求得loss对于weight和bias的导数</p>
+<p>$$<br>\frac{\partial loss}{\partial x _i} = \sum _j \frac{\partial loss}{\partial z _j} {\partial z _j} {\partial x _i} = \sum _{j} \frac{\partial loss}{\partial z _j} W _{ij}<br>$$</p>
+<p>$$<br>\frac{\partial loss}{\partial \mathbf{x} } = \frac{\partial loss} {\partial \mathbf{z} \mathbf{W}}<br>$$</p>
+<p>$$<br>\frac{\partial loss}{\partial W_{jk}} = \sum_i \frac{\partial loss} {\partial z_i} \frac{\partial z_i} {\partial W_{jk}} = \sum_i \frac{\partial loss} {\partial z_i} x_j \delta_ij = \frac{\partial loss} {\partial z_i} x_k<br>$$</p>
+<p>​    即</p>
+<p>$$<br>\frac{\partial loss}{\partial \mathbf{W}} = (\frac{\partial loss} {\partial \mathbf{z}} )^T \mathbf{x}^T<br>$$</p>
+<p>​    loss对于bias的导数相对来说更加简单</p>
+<p>$$<br>\frac{\partial loss}{\partial \mathbf{b}} = \frac{\partial loss}{\partial \mathbf{z}} \frac{\partial \mathbf{z}}{\partial \mathbf{b}} = \frac{\partial loss}{\partial \mathbf{z}} \frac{\partial (\mathbf{Wx+b})}{\partial \mathbf{b}}=\frac{\partial loss}{\partial \mathbf{z}}<br>$$<br>​    我们一般定义$\frac{\partial loss}{\partial \mathbf{z}} =\delta$。利用数学归纳法，我们可以利用第 $l+1$ 层的$\delta^{l+1}$的值一步步求出第 $l$ 层的 $\delta^l$</p>
+<h2 id="卷积层"><a href="#卷积层" class="headerlink" title="卷积层"></a>卷积层</h2><p>​    卷积层的反向传播相对来说会繁琐一些，notation的定义也比全连阶层来说要复杂一些。首先我们来看第$l$层的卷积层的前向传播<br>$$<br>a^l = \sigma(z^l) = \sigma(a^{l-1}* W^l + b^l)<br>$$<br>简单来说，要想推导$\delta^{l-1}$和$\delta^l$之间的关系，需要计算$\frac{\partial z^l}{\partial z^{l-1}}$</p>
+<p>​    因为我们有<br>$$<br>z^l=a^{l−1}∗W^l+b^l=σ(z^{l−1})∗W^l+b^l<br>$$<br>​    从全连接层的反向传播我们可以推导出<br>$$<br>\delta ^{l-1} = \delta^l \frac{\partial z^l}{\partial z^{l-1}} = \delta^l \mathrm{rot}_{180^∘}(W^l) \odot \sigma’(z^{l-1})<br>$$<br>​    这里比较tricky的地方是为什么我们需要<strong>将卷积核旋转180°</strong>（即卷积核上下翻转，左右翻转）因为卷积运算符合比较多，相对来说比较繁琐，我之前推导过一遍，现将过程直接展示如下</p>
+<blockquote>
+<p>we assume $\mathbf{x}$ is the input of the convolution layer and $\mathbf{z}$ is the output of the convolution layer.<br>$$<br>z_{i,j} = \sum_m \sum<em>n W</em>{m,n} x<em>{i+m,j+n} + b<br>$$<br>Assume filter of size $H \times W \times D$ and the input feature map of dimension $A \times B \times C$. It produces an output feature map of size $(A-H+1) \times $(B-W+1)$ \times D$. The gradient component of the individual weights can be obtain by applying the chain rule in the following way:<br>$$<br>\frac{\partial loss}{\partial W</em>{m’,n’}} = \sum<em>{i=0}^{A-H} \sum</em>{j=0}^{B-W} \frac{\partial loss} {\partial z<em>{i,j}} \frac{\partial z</em>{i,j}} {\partial W<em>{m’,n’}}<br>$$<br>where,<br>$$<br>\frac{\partial z</em>{i,j}} {\partial W<em>{m’,n’}} = \frac{\partial}{\partial W</em>{m’,n’}}(\sum_m\sum<em>n W</em>{m,n}x<em>{i+m,j+n} + b)<br>$$<br>Taking the partial derivatives for all components results in zero values for all except the components where $m=m’$ and $n=n’$ as follows:<br>$$<br>\frac{\partial z</em>{i,j}} {\partial W<em>{m’,n’}} = \frac{\partial}{\partial W</em>{m’,n’}}(W<em>{m’,n’}x</em>{i+m’,j+n’}) = x<em>{i+m’,j+n’}<br>$$<br>Hence,<br>$$<br>\frac{\partial loss}{\partial W</em>{m’,n’}} = \sum<em>{i=0}^{A-H}\sum</em>{j=0}^{B-W}\frac{\partial loss}{\partial z<em>{i,j}} x</em>{i+m’,j+n’}<br>= rot<em>{180^\circ} { \frac{\partial loss}{z</em>{i,j}}} * x_{m’,n’}<br>$$<br>Namely,<br>$$<br>\frac{\partial loss}{\partial W} = \frac{\partial loss}{\partial \mathbf{z}} \times \mathbf{x}^T<br>$$</p>
+</blockquote>
+<h2 id="池化层"><a href="#池化层" class="headerlink" title="池化层"></a>池化层</h2><p>​    池化层的反向传播相对来说更好理解。池化简单来说就是一个sample的过程，那么反向传播就是一个upsample的过程</p>
+<h3 id="Max-pooling"><a href="#Max-pooling" class="headerlink" title="Max pooling"></a>Max pooling</h3><p>​    Max pooling是选择池化区域中的最大值， 反向传播中我们需要把$\delta^l$的所有子矩阵矩阵大小还原成池化前的大小。简单来说，对于max pooling的反向传播，需要把$\delta^l$的所有子矩阵的各个值放回前向传播算法得到最大值的位置。因此自己在实现max pooling的前向传播时，需要记录下每个max值的位置。</p>
+<h3 id="Average-pooling"><a href="#Average-pooling" class="headerlink" title="Average pooling"></a>Average pooling</h3><p>​    和Max pooling类似，把$\delta^l$的所有子矩阵的各个池化局域的值取平均后放在还原后的子矩阵位置</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/22/tensorflow_tutorial/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zhe Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#全连接层"><span class="nav-number">1.</span> <span class="nav-text">全连接层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#卷积层"><span class="nav-number">2.</span> <span class="nav-text">卷积层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#池化层"><span class="nav-number">3.</span> <span class="nav-text">池化层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Max-pooling"><span class="nav-number">3.1.</span> <span class="nav-text">Max pooling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Average-pooling"><span class="nav-number">3.2.</span> <span class="nav-text">Average pooling</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhe Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
